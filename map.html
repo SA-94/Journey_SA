@@ -26,6 +26,7 @@
             margin: 20px auto;
             overflow: hidden;
             border: 2px solid #2c3e50;
+            touch-action: none; /* منع التمرير العمودي أثناء السحب على الجوال */
         }
 
         svg {
@@ -36,31 +37,10 @@
         }
 
         .question-mark {
-            font-size: 50px; /* جعل حجم علامة الاستفهام أكبر */
+            font-size: 50px;
             fill: #FFD700;
             cursor: pointer;
-        }
-
-        .zoom-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .zoom-button {
-            background-color: #3498db;
-            border: none;
-            color: #fff;
-            font-size: 18px;
-            padding: 5px 10px;
-            margin: 5px;
-            cursor: pointer;
-        }
-
-        .zoom-button:hover {
-            background-color: #2980b9;
+            filter: drop-shadow(0 0 10px #FFD700);
         }
 
         .popup {
@@ -94,10 +74,6 @@
             float: right;
         }
 
-        .close-button:hover {
-            background-color: #c0392b;
-        }
-
         .coordinates {
             position: fixed;
             bottom: 10px;
@@ -117,27 +93,14 @@
     <div class="map-container" id="mapContainer">
         <svg id="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
             <image href="https://simplemaps.com/static/svg/country/sa/admin1/sa.svg" width="1000" height="1000" />
-
-            <!-- وضع علامات استفهام في أماكن محددة -->
-            <text x="120" y="310" class="question-mark" onclick="showPopup('تبوك', 'https://www.youtube.com/embed/VideoID1')">?</text>
-            <text x="700" y="600" class="question-mark" onclick="showPopup('الشرقية', 'https://www.youtube.com/embed/VideoID2')">?</text>
+            <text x="150" y="300" class="question-mark" onclick="showPopup('تبوك', 'https://www.youtube.com/embed/VideoID1')">?</text>
+            <text x="650" y="540" class="question-mark" onclick="showPopup('الشرقية', 'https://www.youtube.com/embed/VideoID2')">?</text>
             <text x="500" y="550" class="question-mark" onclick="showPopup('الرياض', 'https://www.youtube.com/embed/VideoID3')">?</text>
             <text x="320" y="670" class="question-mark" onclick="showPopup('مكة', 'https://www.youtube.com/embed/VideoID4')">?</text>
             <text x="400" y="800" class="question-mark" onclick="showPopup('عسير', 'https://www.youtube.com/embed/VideoID5')">?</text>
-            <text x="260" y="530" class="question-mark" onclick="showPopup('المدينة المنورة', 'https://www.youtube.com/embed/VideoID5')">?</text>
         </svg>
-
-        <!-- أدوات التكبير -->
-        <div class="zoom-controls">
-            <button class="zoom-button" onclick="zoomIn()">+</button>
-            <button class="zoom-button" onclick="zoomOut()">-</button>
-        </div>
-
-        <!-- عرض الإحداثيات -->
-        <div class="coordinates" id="coordinates">X: 0, Y: 0</div>
     </div>
 
-    <!-- نافذة منبثقة للفيديو -->
     <div id="popup" class="popup">
         <button class="close-button" onclick="closePopup()">إغلاق</button>
         <h2 id="popupTitle">عنوان المنطقة</h2>
@@ -149,28 +112,10 @@
         const popup = document.getElementById("popup");
         const popupTitle = document.getElementById("popupTitle");
         const popupVideo = document.getElementById("popupVideo");
-        const coordinatesDisplay = document.getElementById("coordinates");
+
         let scale = 1;
         let panX = 0;
         let panY = 0;
-        const zoomFactor = 0.1;
-
-        function zoomIn() {
-            scale += zoomFactor;
-            updateTransform();
-        }
-
-        function zoomOut() {
-            if (scale > zoomFactor) {
-                scale -= zoomFactor;
-                updateTransform();
-            }
-        }
-
-        function updateTransform() {
-            map.style.transform = `scale(${scale}) translate(${panX}px, ${panY}px)`;
-        }
-
         let isPanning = false;
         let startX, startY;
 
@@ -181,6 +126,12 @@
             map.style.cursor = "grabbing";
         });
 
+        document.getElementById("mapContainer").addEventListener("touchstart", (e) => {
+            isPanning = true;
+            startX = e.touches[0].clientX - panX;
+            startY = e.touches[0].clientY - panY;
+        });
+
         document.addEventListener("mousemove", (e) => {
             if (!isPanning) return;
             panX = e.clientX - startX;
@@ -188,10 +139,26 @@
             updateTransform();
         });
 
+        document.addEventListener("touchmove", (e) => {
+            if (!isPanning) return;
+            panX = e.touches[0].clientX - startX;
+            panY = e.touches[0].clientY - startY;
+            updateTransform();
+            e.preventDefault(); // منع التمرير العمودي على الجوال أثناء السحب
+        });
+
         document.addEventListener("mouseup", () => {
             isPanning = false;
             map.style.cursor = "grab";
         });
+
+        document.addEventListener("touchend", () => {
+            isPanning = false;
+        });
+
+        function updateTransform() {
+            map.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+        }
 
         function showPopup(region, videoUrl) {
             popup.style.display = "block";
@@ -201,16 +168,8 @@
 
         function closePopup() {
             popup.style.display = "none";
-            popupVideo.src = ""; // وقف الفيديو عند الإغلاق
+            popupVideo.src = "";
         }
-
-        // تحديث إحداثيات الماوس
-        document.addEventListener("mousemove", (e) => {
-            const rect = map.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            coordinatesDisplay.textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
-        });
     </script>
 
 </body>
