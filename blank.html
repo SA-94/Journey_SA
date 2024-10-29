@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استكشف - الصفحة الرئيسية</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* الشريط الجانبي */
+        .sidebar {
+            width: 100%; /* عرض الشريط لكامل العرض */
+            background-color: #2c3e50;
+            color: white;
+            height: 150px; /* ارتفاع الشريط */
+            padding: 20px;
+            box-sizing: border-box;
+            position: fixed;
+            bottom: -150px; /* إخفاء الشريط في البداية */
+            transition: bottom 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+            padding: 8px;
+            background-color: #34495e;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .sidebar a:hover {
+            background-color: #1abc9c;
+        }
+
+        /* الحقوق */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            padding: 20px;
+            background-color: #ecf0f1;
+        }
+
+        .main-content h1 {
+            color: #2c3e50;
+        }
+
+        .main-content p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* زر الشريط الجانبي */
+        .menu-button {
+            font-size: 30px;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            transition: background-color 0.3s;
+        }
+
+        .menu-button:hover {
+            background-color: #1abc9c;
+        }
+
+        /* عرض الشريط الجانبي عند النقر */
+        .sidebar-open .sidebar {
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- زر التحكم في الشريط الجانبي -->
+    <button class="menu-button" onclick="toggleSidebar()">&#9776;</button>
+
+    <!-- الشريط الجانبي في الأسفل -->
+    <div class="sidebar">
+        <h2>استكشف</h2>
+        <a href="map.html">خريطة تفاعلية</a>
+        <a href="https://forms.gle/LbFievnDGSMUW2VV6" target="_blank">المسابقة</a>
+        <a href="#تعرف-على-السعودية">هل تعلم؟</a>
+        <a href="#القصائد">قصائد</a>
+    </div>
+
+    <!-- الحقوق الثابتة في أسفل الصفحة -->
+    <div class="footer">
+        &copy; جميع الحقوق محفوظة - استكشف
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <h1>مرحبًا بكم في استكشف</h1>
+        <p>هذه هي الصفحة الرئيسية للموقع التفاعلي حيث يمكنكم التعرف على موارد المملكة العربية السعودية والتفاعل مع المسابقة والمعلومات المثيرة. نأمل أن تستمتعوا بتجربة فريدة وثرية!</p>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.body.classList.toggle("sidebar-open");
+        }
+    </script>
+</body>
+</html>
